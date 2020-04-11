@@ -16,6 +16,8 @@
 
 package org.tensorflow.lite.examples.detection;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -26,14 +28,24 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -43,10 +55,13 @@ import org.tensorflow.lite.examples.detection.tflite.Classifier;
 import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
 import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
 
-/**
- * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
- * objects.
- */
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
   private static final Logger LOGGER = new Logger();
 
@@ -83,6 +98,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private BorderedText borderedText;
 
+  String objectfoundname;
+  // SharedPreferences shared = getSharedPreferences("App_settings", MODE_PRIVATE);
+  private RequestQueue rQueue;
+  Set<String> set;
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -93,6 +112,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     borderedText.setTypeface(Typeface.MONOSPACE);
 
     tracker = new MultiBoxTracker(this);
+
+    SharedPreferences sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(this);
+
+     set = sharedPreferences.getStringSet("DATE_LIST", null);
+
+    Log.d("vt","set "+set);
+
 
     int cropSize = TF_OD_API_INPUT_SIZE;
 
@@ -182,8 +209,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             final long startTime = SystemClock.uptimeMillis();
             final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
 
-
-
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
@@ -211,7 +236,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
 
               final RectF location = result.getLocation();
-              if (location != null && result.getConfidence() >= 0.7f) {
+              if (location != null && result.getConfidence() >= 0.6f) {
           //      if (location != null && result.getConfidence() >= minimumConfidence) {
                 canvas.drawRect(location, paint);
 
@@ -220,9 +245,25 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 result.setLocation(location);
                 mappedRecognitions.add(result);
 
-                Log.d("vt","test2 "+result.getTitle());
+
+              //  if(result.getTitle().equals("cat")){
+
+                if(set.contains(result.getTitle())){
+
+                  objectfoundname = result.getTitle();
+
+//                  Intent i = new Intent(DetectorActivity.this,ProcessDetected.class);
+//                  Bundle bundle = new Bundle();
+//                  bundle.putString("key_1",objectfoundname);
+//                  i.putExtras(bundle);
+//                  i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                  startActivity(i);
+
+                  objectPost();
 
 
+                }
+               // Log.d("vt","test2 "+result.getTitle());
               }
             }
 
@@ -270,5 +311,60 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   @Override
   protected void setNumThreads(final int numThreads) {
     runInBackground(() -> detector.setNumThreads(numThreads));
+  }
+
+
+
+  private void objectPost() {
+
+    String registerURL = "103.51.20.9/aiapi/adddetails";
+
+    StringRequest stringRequest = new StringRequest(Request.Method.POST, registerURL,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+
+                    Log.d("vt",response);
+
+
+                try {
+                  JSONObject jsonObject = new JSONObject(response);
+                   Toast.makeText(DetectorActivity.this,jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+
+
+              }
+            },
+            new Response.ErrorListener() {
+              @Override
+              public void onErrorResponse(VolleyError error) {
+                Toast.makeText(DetectorActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+              }
+            }) {
+//      @Override
+//      public Map<String, String> getHeaders() throws AuthFailureError {
+//        Map<String, String> params = new HashMap<String, String>();
+//        params.put("api_key", "c7ad3e44a02d132392ec845cc125a6a1");
+//        return params;
+//
+//      }
+
+
+      @Override
+      protected Map<String, String> getParams() {
+        Map<String, String> params = new HashMap<String, String>();
+
+        params.put("name",objectfoundname);
+
+        return params;
+      }
+
+    };
+
+    rQueue = Volley.newRequestQueue(DetectorActivity.this);
+    rQueue.add(stringRequest);
   }
 }

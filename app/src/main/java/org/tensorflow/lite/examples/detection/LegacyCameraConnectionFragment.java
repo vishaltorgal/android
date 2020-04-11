@@ -18,6 +18,7 @@ package org.tensorflow.lite.examples.detection;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -151,7 +152,11 @@ public class LegacyCameraConnectionFragment extends Fragment {
     // the SurfaceTextureListener).
 
     if (textureView.isAvailable()) {
-      camera.startPreview();
+
+      try {
+        camera.startPreview();
+      }catch (Exception e){
+      }
     } else {
       textureView.setSurfaceTextureListener(surfaceTextureListener);
     }

@@ -26,5 +26,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ProcessDetected"/>
+        <activity android:name=".Settings"/>
+        <activity android:name=".ViewDetected"/>
+
     </application>
 </manifest>
