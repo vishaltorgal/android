@@ -44,6 +44,7 @@ public class Settings extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                set.clear();;
                 display(v);
             }
         });
@@ -69,6 +70,7 @@ public class Settings extends AppCompatActivity {
                 Toast.LENGTH_SHORT).show();
 
         Intent i = new Intent(Settings.this, DetectorActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
 
     }

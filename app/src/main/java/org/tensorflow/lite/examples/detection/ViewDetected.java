@@ -1,6 +1,7 @@
 package org.tensorflow.lite.examples.detection;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +61,7 @@ public class ViewDetected extends AppCompatActivity {
 
             //      try {
 
-            String registerURL = "103.51.20.9/aiapi/getdetails";
+            String registerURL = "http://103.51.20.9/aiapi/getdetails";
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST, registerURL,
                     new Response.Listener<String>() {
@@ -84,8 +85,8 @@ public class ViewDetected extends AppCompatActivity {
                                     JSONObject obj = arr.getJSONObject(i);
 
                                     // Log.d("vt",obj.getString("comment"));
-                                    map.put("get_object", obj.getString("get_object"));
-                                    map.put("get_time", obj.getString("get_time"));
+                                    map.put("get_object", obj.getString("Name"));
+                                    map.put("get_time", obj.getString("Date"));
 
 
                                     arraylist.add(map);
@@ -144,5 +145,12 @@ public class ViewDetected extends AppCompatActivity {
 
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(ViewDetected.this,DetectorActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
     }
 }

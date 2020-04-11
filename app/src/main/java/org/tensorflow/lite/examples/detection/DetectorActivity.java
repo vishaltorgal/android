@@ -116,9 +116,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     SharedPreferences sharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(this);
 
-     set = sharedPreferences.getStringSet("DATE_LIST", null);
+     set = sharedPreferences.getStringSet("item_detect", null);
 
-    Log.d("vt","set "+set);
+    //Log.d("vt","set found "+set);
 
 
     int cropSize = TF_OD_API_INPUT_SIZE;
@@ -252,6 +252,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                   objectfoundname = result.getTitle();
 
+                  Toast.makeText(DetectorActivity.this,"Object :"+objectfoundname,Toast.LENGTH_SHORT).show();
 //                  Intent i = new Intent(DetectorActivity.this,ProcessDetected.class);
 //                  Bundle bundle = new Bundle();
 //                  bundle.putString("key_1",objectfoundname);
@@ -274,15 +275,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             computingDetection = false;
 
-            runOnUiThread(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    showFrameInfo(previewWidth + "x" + previewHeight);
-                    showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-                    showInference(lastProcessingTimeMs + "ms");
-                  }
-                });
+//            runOnUiThread(
+//                new Runnable() {
+//                  @Override
+//                  public void run() {
+//                    showFrameInfo(previewWidth + "x" + previewHeight);
+//                    showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
+//                    showInference(lastProcessingTimeMs + "ms");
+//                  }
+//                });
           }
         });
   }
@@ -317,7 +318,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private void objectPost() {
 
-    String registerURL = "103.51.20.9/aiapi/adddetails";
+    String registerURL = "http://103.51.20.9/aiapi/adddetails";
 
     StringRequest stringRequest = new StringRequest(Request.Method.POST, registerURL,
             new Response.Listener<String>() {
@@ -329,7 +330,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                 try {
                   JSONObject jsonObject = new JSONObject(response);
-                   Toast.makeText(DetectorActivity.this,jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                  // Toast.makeText(DetectorActivity.this,jsonObject.getString("message"), Toast.LENGTH_LONG).show();
 
                 } catch (JSONException e) {
                   e.printStackTrace();
@@ -341,6 +342,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             new Response.ErrorListener() {
               @Override
               public void onErrorResponse(VolleyError error) {
+                Log.d("vt",error.getMessage());
                 Toast.makeText(DetectorActivity.this, "Failed", Toast.LENGTH_SHORT).show();
               }
             }) {

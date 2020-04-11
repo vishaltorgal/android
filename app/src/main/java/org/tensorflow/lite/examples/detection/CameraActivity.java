@@ -120,66 +120,66 @@ public abstract class CameraActivity extends AppCompatActivity
     apiSwitchCompat = findViewById(R.id.api_info_switch);
     bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
     gestureLayout = findViewById(R.id.gesture_layout);
-    sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+   // sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
     bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
 
 
 
-    ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
-    vto.addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-              gestureLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            } else {
-              gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-            //                int width = bottomSheetLayout.getMeasuredWidth();
-            int height = gestureLayout.getMeasuredHeight();
+//    ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
+//    vto.addOnGlobalLayoutListener(
+//        new ViewTreeObserver.OnGlobalLayoutListener() {
+//          @Override
+//          public void onGlobalLayout() {
+//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+//              gestureLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//            } else {
+//              gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//            }
+//            //                int width = bottomSheetLayout.getMeasuredWidth();
+//            int height = gestureLayout.getMeasuredHeight();
+//
+//            sheetBehavior.setPeekHeight(height);
+//          }
+//        });
+//    sheetBehavior.setHideable(false);
 
-            sheetBehavior.setPeekHeight(height);
-          }
-        });
-    sheetBehavior.setHideable(false);
-
-    sheetBehavior.setBottomSheetCallback(
-        new BottomSheetBehavior.BottomSheetCallback() {
-          @Override
-          public void onStateChanged(@NonNull View bottomSheet, int newState) {
-            switch (newState) {
-              case BottomSheetBehavior.STATE_HIDDEN:
-                break;
-              case BottomSheetBehavior.STATE_EXPANDED:
-                {
-                  bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_down);
-                }
-                break;
-              case BottomSheetBehavior.STATE_COLLAPSED:
-                {
-                  bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
-                }
-                break;
-              case BottomSheetBehavior.STATE_DRAGGING:
-                break;
-              case BottomSheetBehavior.STATE_SETTLING:
-                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
-                break;
-            }
-          }
-
-          @Override
-          public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
-        });
+//    sheetBehavior.setBottomSheetCallback(
+//        new BottomSheetBehavior.BottomSheetCallback() {
+//          @Override
+//          public void onStateChanged(@NonNull View bottomSheet, int newState) {
+//            switch (newState) {
+//              case BottomSheetBehavior.STATE_HIDDEN:
+//                break;
+//              case BottomSheetBehavior.STATE_EXPANDED:
+//                {
+//                  bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_down);
+//                }
+//                break;
+//              case BottomSheetBehavior.STATE_COLLAPSED:
+//                {
+//                  bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
+//                }
+//                break;
+//              case BottomSheetBehavior.STATE_DRAGGING:
+//                break;
+//              case BottomSheetBehavior.STATE_SETTLING:
+//                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
+//                break;
+//            }
+//          }
+//
+//          @Override
+//          public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
+//        });
 
     frameValueTextView = findViewById(R.id.frame_info);
     cropValueTextView = findViewById(R.id.crop_info);
     inferenceTimeTextView = findViewById(R.id.inference_info);
 
-    apiSwitchCompat.setOnCheckedChangeListener(this);
+//    apiSwitchCompat.setOnCheckedChangeListener(this);
 
-    plusImageView.setOnClickListener(this);
-    minusImageView.setOnClickListener(this);
+//    plusImageView.setOnClickListener(this);
+ //   minusImageView.setOnClickListener(this);
   }
 
   protected int[] getRgbBytes() {
@@ -537,9 +537,9 @@ public abstract class CameraActivity extends AppCompatActivity
     }
   }
 
-  protected void showFrameInfo(String frameInfo) {
-    frameValueTextView.setText(frameInfo);
-  }
+//  protected void showFrameInfo(String frameInfo) {
+//    frameValueTextView.setText(frameInfo);
+//  }
 
   protected void showCropInfo(String cropInfo) {
     cropValueTextView.setText(cropInfo);
@@ -570,20 +570,25 @@ public abstract class CameraActivity extends AppCompatActivity
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
-    switch (id){
+    switch (id) {
       case R.id.settings:
 
-        Intent i = new Intent(CameraActivity.this,Settings.class);
+        Intent i = new Intent(CameraActivity.this, Settings.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
+        break;
 
       case R.id.viewobjectsdetected:
 
-        Intent ii = new Intent(CameraActivity.this,ViewDetected.class);
+        Intent ii = new Intent(CameraActivity.this, ViewDetected.class);
+        ii.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(ii);
+        break;
 
-        return true;
+
       default:
         return super.onOptionsItemSelected(item);
     }
+    return true;
   }
 }

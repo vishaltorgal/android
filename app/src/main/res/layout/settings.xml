@@ -10,30 +10,42 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:gravity="center"
-        android:text="Select objects you want to detect"/>
+        android:textSize="22sp"
+        android:textColor="@color/tfe_color_primary"
+        android:text="Select Objects You Want to Detect"/>
 
     <CheckBox
         android:id="@+id/cat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_margin="10dp"
         android:text="Cat" />
 
     <CheckBox
         android:id="@+id/dog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_margin="10dp"
         android:text="Dog" />
 
     <CheckBox
         android:id="@+id/person"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_margin="10dp"
         android:text="Person" />
 
 <Button
     android:id="@+id/submit"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:textColor="#ffff"
+    android:textSize="22sp"
+    android:background="@color/tfe_color_primary"
     android:text="Submit" />
 
 </LinearLayout>
